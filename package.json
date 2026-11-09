@@ -1,0 +1,20 @@
+{
+  "name": "junyang-huh.github.io",
+  "version": "1.0.0",
+  "description": "Jun Yang 的只读双周忙闲时间表。目标地址：`https://junyang-huh.github.io/availability/`。",
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  },
+  "private": true
+}
