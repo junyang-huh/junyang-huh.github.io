@@ -1,12 +1,25 @@
 import { DAY, dayStart, parseAvailability, type Availability } from './calendar.ts';
+import { retryDeadline } from './cooldown.ts';
 
-export interface State { data?: Availability; loading: boolean; error: boolean }
+export class RateLimitError extends Error {
+  retryAt: number;
+  constructor(retryAt: number) {
+    super('HTTP 429');
+    this.name = 'RateLimitError';
+    this.retryAt = retryAt;
+  }
+}
+export interface State { data?: Availability; loading: boolean; error: boolean; retryAt?: number }
 export async function refresh(state: State, fetcher: () => Promise<unknown>): Promise<State> {
   try { return { data: parseAvailability(await fetcher()), loading: false, error: false }; }
-  catch { return { data: state.data, loading: false, error: true }; }
+  catch (error) {
+    return { data: state.data, loading: false, error: true,
+      retryAt: error instanceof RateLimitError ? error.retryAt : undefined };
+  }
 }
 export async function requestData(url: string): Promise<unknown> {
   const response = await fetch(url, { signal: AbortSignal.timeout(15_000), cache: 'no-store' });
+  if (response.status === 429) throw new RateLimitError(retryDeadline(response.headers.get('Retry-After')));
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
 }

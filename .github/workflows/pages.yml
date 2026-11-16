@@ -29,7 +29,7 @@ jobs:
       - run: npm run build
         env:
           VITE_AVAILABILITY_API_URL: ${{ vars.VITE_AVAILABILITY_API_URL }}
-      - run: mkdir -p site/availability && cp -R dist/. site/availability/ && touch site/.nojekyll
+      - run: mkdir -p site/availability && cp -R dist/. site/availability/ && cp google46a1bc4346533088.html site/ && touch site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
